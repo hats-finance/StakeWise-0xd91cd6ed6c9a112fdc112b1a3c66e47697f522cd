@@ -118,13 +118,13 @@ contract OsToken is ERC20, Ownable2Step, IOsToken {
     if (totalAssetsAfter > capacity) revert Errors.CapacityExceeded();
 
     // update counters
-    _totalShares += SafeCast.toUint128(shares);
+    _totalShares = _totalShares+ SafeCast.toUint128(shares); //Gas saving, x = x + y
     _totalAssets = SafeCast.toUint128(totalAssetsAfter);
 
     unchecked {
       // cannot overflow because the sum of all user
       // balances can't exceed total shares
-      balanceOf[receiver] += shares;
+      balanceOf[receiver] = balanceOf[receiver] + shares;  //Gas saving, x = x + y
     }
 
     emit Transfer(address(0), receiver, shares);
@@ -143,14 +143,14 @@ contract OsToken is ERC20, Ownable2Step, IOsToken {
     assets = convertToAssets(shares);
 
     // burn shares
-    balanceOf[owner] -= shares;
+    balanceOf[owner] = balanceOf[owner] - shares; //Gas saving, x = x + y
 
     // update counters
     unchecked {
       // cannot underflow because the sum of all shares can't exceed the _totalShares
-      _totalShares -= SafeCast.toUint128(shares);
+      _totalShares = _totalShares - SafeCast.toUint128(shares); //Gas saving, x = x + y
       // cannot underflow because the sum of all assets can't exceed the _totalAssets
-      _totalAssets -= SafeCast.toUint128(assets);
+      _totalAssets = _totalAssets - SafeCast.toUint128(assets); //Gas saving, x = x + y
     }
 
     emit Transfer(owner, address(0), shares);
@@ -289,7 +289,7 @@ contract OsToken is ERC20, Ownable2Step, IOsToken {
     // mint shares to the fee recipient
     unchecked {
       // cannot underflow because the sum of all shares can't exceed the _totalShares
-      balanceOf[_treasury] += treasuryShares;
+      balanceOf[_treasury] = balanceOf[_treasury] + treasuryShares; //Gas saving, x = x + y
     }
     emit Transfer(address(0), _treasury, treasuryShares);
 

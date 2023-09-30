@@ -46,12 +46,12 @@ abstract contract VaultToken is Initializable, ERC20Upgradeable, VaultState, IVa
   /// @inheritdoc ERC20Upgradeable
   function _transfer(address from, address to, uint256 amount) internal virtual override {
     if (from == address(0) || to == address(0)) revert Errors.ZeroAddress();
-    _balances[from] -= amount;
+    _balances[from] = _balances[from] - amount; //Gas saving
 
     // Cannot overflow because the sum of all user
     // balances can't exceed the max uint256 value
     unchecked {
-      _balances[to] += amount;
+      _balances[to] = _balances[to] + amount; //Gas saving
     }
 
     emit Transfer(from, to, amount);

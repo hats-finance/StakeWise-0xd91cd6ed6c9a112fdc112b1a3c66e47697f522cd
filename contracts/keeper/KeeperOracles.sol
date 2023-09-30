@@ -58,7 +58,7 @@ abstract contract KeeperOracles is Ownable2Step, EIP712, IKeeperOracles {
       _totalOracles = totalOracles - 1;
     }
 
-    isOracle[oracle] = false;
+    delete isOracle[oracle];  //Gas saving, Use delete
     totalOracles = _totalOracles;
 
     emit OracleRemoved(oracle);
@@ -91,7 +91,7 @@ abstract contract KeeperOracles is Ownable2Step, EIP712, IKeeperOracles {
     address lastOracle;
     address currentOracle;
     uint256 startIndex;
-    for (uint256 i = 0; i < requiredSignatures; ) {
+    for (uint256 i; i < requiredSignatures; ) { //Gas saving, Don't assagin to zero
       unchecked {
         // cannot overflow as signatures.length is checked above
         currentOracle = ECDSA.recover(data, signatures[startIndex:startIndex + _signatureLength]);

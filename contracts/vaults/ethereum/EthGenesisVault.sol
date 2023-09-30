@@ -154,7 +154,7 @@ contract EthGenesisVault is Initializable, EthVault, IEthGenesisVault {
     shares = convertToShares(assets);
 
     // update state
-    _totalAssets += SafeCast.toUint128(assets);
+    _totalAssets = _totalAssets + SafeCast.toUint128(assets); //Gas saving
     _mintShares(receiver, shares);
 
     emit Migrated(receiver, assets, shares);

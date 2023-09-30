@@ -157,12 +157,14 @@ abstract contract ERC20 is IERC20Permit {
    */
   function _transfer(address from, address to, uint256 amount) private {
     if (from == address(0) || to == address(0)) revert Errors.ZeroAddress();
-    balanceOf[from] -= amount;
+    //Gas saving, user x = x + y instead of x += y
+    balanceOf[from] = balanceOf[from] - amount;
 
     // Cannot overflow because the sum of all user
     // balances can't exceed the max uint256 value
     unchecked {
-      balanceOf[to] += amount;
+      //Gas saving, user x = x + y instead of x += y
+      balanceOf[to] = balanceOf[to] + amount;
     }
 
     emit Transfer(from, to, amount);

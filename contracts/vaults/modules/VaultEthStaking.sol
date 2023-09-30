@@ -90,7 +90,7 @@ abstract contract VaultEthStaking is
     uint256 validatorDeposit = _validatorDeposit();
     bytes memory withdrawalCreds = _withdrawalCredentials();
 
-    for (uint256 i = 0; i < validatorsCount; ) {
+    for (uint256 i; i < validatorsCount; ) { //Gas saving
       unchecked {
         // cannot realistically overflow
         endIndex += _validatorLength;

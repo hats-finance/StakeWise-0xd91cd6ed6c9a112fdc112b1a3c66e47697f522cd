@@ -42,7 +42,7 @@ abstract contract VaultEnterExit is VaultImmutables, Initializable, VaultState, 
     if (assets > withdrawableAssets()) revert Errors.InsufficientAssets();
 
     // update total assets
-    _totalAssets -= SafeCast.toUint128(assets);
+    _totalAssets = _totalAssets + SafeCast.toUint128(assets); //Gas saving
 
     // burn owner shares
     _burnShares(msg.sender, shares);
@@ -72,7 +72,7 @@ abstract contract VaultEnterExit is VaultImmutables, Initializable, VaultState, 
     _exitRequests[keccak256(abi.encode(receiver, positionTicket))] = shares;
 
     // reverts if owner does not have enough shares
-    _balances[msg.sender] -= shares;
+    _balances[msg.sender] = _balances[msg.sender] - shares; //Gas saving
 
     unchecked {
       // cannot overflow as it is capped with _totalShares
@@ -136,7 +136,7 @@ abstract contract VaultEnterExit is VaultImmutables, Initializable, VaultState, 
     }
 
     // transfer assets to the receiver
-    _unclaimedAssets -= SafeCast.toUint96(claimedAssets);
+    _unclaimedAssets = _unclaimedAssets -  SafeCast.toUint96(claimedAssets); //Gas saving
     _transferVaultAssets(msg.sender, claimedAssets);
     emit ExitedAssetsClaimed(msg.sender, positionTicket, newPositionTicket, claimedAssets);
   }

@@ -44,7 +44,7 @@ contract VaultsRegistry is Ownable2Step, IVaultsRegistry {
   /// @inheritdoc IVaultsRegistry
   function removeVaultImpl(address impl) external override onlyOwner {
     if (!vaultImpls[impl]) revert Errors.AlreadyRemoved();
-    vaultImpls[impl] = false;
+    delete vaultImpls[impl]; //Gas saving
     emit VaultImplRemoved(impl);
   }
 
@@ -58,7 +58,7 @@ contract VaultsRegistry is Ownable2Step, IVaultsRegistry {
   /// @inheritdoc IVaultsRegistry
   function removeFactory(address factory) external override onlyOwner {
     if (!factories[factory]) revert Errors.AlreadyRemoved();
-    factories[factory] = false;
+    delete factories[factory]; //Gas saving
     emit FactoryRemoved(factory);
   }
 }

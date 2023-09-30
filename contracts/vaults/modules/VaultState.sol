@@ -182,8 +182,8 @@ abstract contract VaultState is VaultImmutables, Initializable, VaultFee, IVault
     emit CheckpointCreated(burnedShares, exitedAssets);
 
     // update state
-    _totalShares -= SafeCast.toUint128(burnedShares);
-    _totalAssets -= SafeCast.toUint128(exitedAssets);
+    _totalShares = _totalShares - SafeCast.toUint128(burnedShares); //Gas saving
+    _totalAssets = _totalAssets - SafeCast.toUint128(exitedAssets); //Gas saving
   }
 
   /**
@@ -193,13 +193,13 @@ abstract contract VaultState is VaultImmutables, Initializable, VaultFee, IVault
    */
   function _mintShares(address owner, uint256 shares) internal virtual {
     // update total shares
-    _totalShares += SafeCast.toUint128(shares);
+    _totalShares = _totalShares + SafeCast.toUint128(shares); //Gas saving
 
     // mint shares
     unchecked {
       // cannot overflow because the sum of all user
       // balances can't exceed the max uint256 value
-      _balances[owner] += shares;
+      _balances[owner] = _balances[owner] + shares; //Gas saving
     }
   }
 
@@ -210,12 +210,12 @@ abstract contract VaultState is VaultImmutables, Initializable, VaultFee, IVault
    */
   function _burnShares(address owner, uint256 shares) internal virtual {
     // burn shares
-    _balances[owner] -= shares;
+    _balances[owner] = _balances[owner] - shares; //Gas saving
 
     // update total shares
     unchecked {
       // cannot underflow because the sum of all shares can't exceed the _totalShares
-      _totalShares -= SafeCast.toUint128(shares);
+      _totalShares = _totalShares - SafeCast.toUint128(shares); //Gas saving
     }
   }
 
